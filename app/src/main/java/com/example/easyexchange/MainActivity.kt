@@ -1,25 +1,31 @@
 package com.example.easyexchange
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.animation.AlphaAnimation
-import android.view.animation.AnimationUtils
+import android.view.animation.ScaleAnimation
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.easyexchange.databinding.ActivityMainBinding
 import java.util.Locale
 
+/**
+ * MainActivity for EasyExchange - A professional Currency Converter.
+ * Implements real-time conversion logic with Material 3 UI components.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    // Conversion rates (Base: 1 INR) - Updated for demonstration
+    // Realistic static conversion rates (Base: 1 INR)
     private val rates = mapOf(
-        R.id.chipUsd to Pair(0.012, "USD ($)"),
-        R.id.chipEur to Pair(0.011, "EUR (€)"),
-        R.id.chipGbp to Pair(0.0092, "GBP (£)"),
-        R.id.chipJpy to Pair(1.83, "JPY (¥)"),
-        R.id.chipAud to Pair(0.018, "AUD ($)")
+        R.id.chipUsd to RateInfo(0.012, "USD", "$"),
+        R.id.chipEur to RateInfo(0.011, "EUR", "€"),
+        R.id.chipGbp to RateInfo(0.0095, "GBP", "£"),
+        R.id.chipJpy to RateInfo(1.83, "JPY", "¥"),
+        R.id.chipAud to RateInfo(0.018, "AUD", "$")
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,69 +37,105 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Handle "Convert Now" button click
+        // Handle "Convert Now" button click (for explicit action)
         binding.btnConvert.setOnClickListener {
-            performConversion()
+            performConversion(showErrors = true)
         }
 
-        // Instant conversion when a chip is selected
+        // Real-time conversion when amount changes
+        binding.etAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                performConversion(showErrors = false)
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Instant conversion when a currency chip is selected
         binding.chipGroupCurrencies.setOnCheckedStateChangeListener { _, checkedIds ->
             if (checkedIds.isNotEmpty()) {
-                if (binding.etAmount.text.toString().isNotEmpty()) {
-                    performConversion()
-                }
+                performConversion(showErrors = false)
             }
         }
     }
 
-    private fun performConversion() {
+    /**
+     * Core conversion logic.
+     * @param showErrors If true, show error messages (used for button click).
+     */
+    private fun performConversion(showErrors: Boolean) {
         val amountStr = binding.etAmount.text.toString().trim()
         val checkedChipId = binding.chipGroupCurrencies.checkedChipId
 
+        // Basic validation
         if (amountStr.isEmpty()) {
-            binding.tilAmount.error = getString(R.string.error_empty_input)
+            if (showErrors) binding.tilAmount.error = getString(R.string.error_empty_input)
+            hideResult()
             return
         } else {
             binding.tilAmount.error = null
         }
 
+        // Check if a currency is selected
         if (checkedChipId == View.NO_ID) {
-            Toast.makeText(this, getString(R.string.error_select_currency), Toast.LENGTH_SHORT).show()
+            if (showErrors) Toast.makeText(this, getString(R.string.error_select_currency), Toast.LENGTH_SHORT).show()
+            hideResult()
             return
         }
 
         val amount = amountStr.toDoubleOrNull()
         if (amount == null) {
-            binding.tilAmount.error = getString(R.string.error_invalid_input)
+            if (showErrors) binding.tilAmount.error = getString(R.string.error_invalid_input)
+            hideResult()
             return
         }
 
+        // Perform calculation
         val rateInfo = rates[checkedChipId]
         if (rateInfo != null) {
-            val (rate, label) = rateInfo
-            val result = amount * rate
-            
-            showResult(result, label, rate)
+            val convertedAmount = amount * rateInfo.rate
+            updateResultUI(amount, convertedAmount, rateInfo)
         }
     }
 
-    private fun showResult(result: Double, label: String, rate: Double) {
-        // Update UI text
-        binding.tvResultValue.text = String.format(Locale.getDefault(), "%.2f", result)
-        binding.tvResultLabel.text = "Converted Amount ($label)"
-        binding.tvConversionDetails.text = "1 INR = $rate ${label.substringBefore(" ")}"
+    /**
+     * Updates the Result Card with formatted values and animations.
+     */
+    private fun updateResultUI(inputAmount: Double, result: Double, rateInfo: RateInfo) {
+        val locale = Locale.getDefault()
+        
+        // Format values
+        val formattedResult = String.format(locale, "%.2f", result)
+        val formattedRate = String.format(locale, "%.4f", rateInfo.rate)
 
-        // Animate Result Card appearance if it was hidden
+        // Update UI
+        binding.tvResultValue.text = getString(R.string.amount_hint).replace("0.00", "${rateInfo.symbol} $formattedResult")
+        binding.tvResultLabel.text = getString(R.string.result_label_formatted, rateInfo.code)
+        binding.tvConversionDetails.text = getString(R.string.conversion_details_formatted, formattedRate, rateInfo.code)
+
+        // Show card with animation
         if (binding.cardResult.visibility != View.VISIBLE) {
             binding.cardResult.visibility = View.VISIBLE
             val fadeIn = AlphaAnimation(0f, 1f)
             fadeIn.duration = 400
             binding.cardResult.startAnimation(fadeIn)
         } else {
-            // Subtle pop animation for update
-            val scaleUp = AlphaAnimation(0.5f, 1f)
-            scaleUp.duration = 200
-            binding.cardResult.startAnimation(scaleUp)
+            // Pulse animation for value update
+            val pulse = ScaleAnimation(1f, 1.05f, 1f, 1.05f, 
+                ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f)
+            pulse.duration = 150
+            pulse.repeatMode = ScaleAnimation.REVERSE
+            pulse.repeatCount = 1
+            binding.cardResult.startAnimation(pulse)
         }
     }
+
+    private fun hideResult() {
+        binding.cardResult.visibility = View.INVISIBLE
+    }
+
+    /**
+     * Data class to hold currency information.
+     */
+    data class RateInfo(val rate: Double, val code: String, val symbol: String)
 }
