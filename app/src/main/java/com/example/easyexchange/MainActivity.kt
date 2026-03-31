@@ -1,100 +1,99 @@
 package com.example.easyexchange
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import android.view.animation.AlphaAnimation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.easyexchange.databinding.ActivityMainBinding
 import java.util.Locale
 
-/**
- * MainActivity for the Currency Converter application.
- * This app uses an Options Menu in the Toolbar to trigger currency conversions.
- */
 class MainActivity : AppCompatActivity() {
 
-    // ViewBinding instance to access UI elements safely
     private lateinit var binding: ActivityMainBinding
 
-    // Realistic static conversion rates (Base: 1 INR)
-    private val INR_TO_USD = 0.012
-    private val INR_TO_EUR = 0.011
-    private val INR_TO_GBP = 0.0094
+    // Conversion rates (Base: 1 INR) - Updated for demonstration
+    private val rates = mapOf(
+        R.id.chipUsd to Pair(0.012, "USD ($)"),
+        R.id.chipEur to Pair(0.011, "EUR (€)"),
+        R.id.chipGbp to Pair(0.0092, "GBP (£)"),
+        R.id.chipJpy to Pair(1.83, "JPY (¥)"),
+        R.id.chipAud to Pair(0.018, "AUD ($)")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Initialize ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up the Material Toolbar as the Action Bar
-        setSupportActionBar(binding.toolbar)
+        setupUI()
     }
 
-    /**
-     * Inflates the menu resource into the existing menu.
-     */
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
+    private fun setupUI() {
+        // Handle "Convert Now" button click
+        binding.btnConvert.setOnClickListener {
+            performConversion()
+        }
 
-    /**
-     * Handles menu item clicks for currency selection.
-     */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_inr_to_usd -> {
-                performConversion(getString(R.string.action_inr_to_usd), "$", INR_TO_USD)
-                true
+        // Instant conversion when a chip is selected
+        binding.chipGroupCurrencies.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                if (binding.etAmount.text.toString().isNotEmpty()) {
+                    performConversion()
+                }
             }
-            R.id.action_inr_to_eur -> {
-                performConversion(getString(R.string.action_inr_to_eur), "€", INR_TO_EUR)
-                true
-            }
-            R.id.action_inr_to_gbp -> {
-                performConversion(getString(R.string.action_inr_to_gbp), "£", INR_TO_GBP)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    /**
-     * Logic to perform currency conversion.
-     * @param targetLabel The label for the conversion (e.g., INR to USD)
-     * @param symbol The currency symbol (e.g., $)
-     * @param rate The conversion rate from INR
-     */
-    private fun performConversion(targetLabel: String, symbol: String, rate: Double) {
-        val input = binding.etAmount.text.toString().trim()
+    private fun performConversion() {
+        val amountStr = binding.etAmount.text.toString().trim()
+        val checkedChipId = binding.chipGroupCurrencies.checkedChipId
 
-        if (input.isEmpty()) {
-            Toast.makeText(this, getString(R.string.error_empty_input), Toast.LENGTH_SHORT).show()
+        if (amountStr.isEmpty()) {
+            binding.tilAmount.error = getString(R.string.error_empty_input)
+            return
+        } else {
+            binding.tilAmount.error = null
+        }
+
+        if (checkedChipId == View.NO_ID) {
+            Toast.makeText(this, getString(R.string.error_select_currency), Toast.LENGTH_SHORT).show()
             return
         }
 
-        try {
-            val amountInInr = input.toDouble()
-            val convertedAmount = amountInInr * rate
-            
-            // Format result to 2 decimal places
-            val formattedResult = String.format(Locale.getDefault(), "%.2f", convertedAmount)
-            
-            // Update UI
-            binding.tvConversionType.text = "Selected: $targetLabel"
-            binding.tvResult.text = "Result: $symbol $formattedResult"
-            
-            // Add a simple fade-in animation for modern feel
-            val fadeIn = AlphaAnimation(0.0f, 1.0f)
-            fadeIn.duration = 500
-            binding.tvResult.startAnimation(fadeIn)
+        val amount = amountStr.toDoubleOrNull()
+        if (amount == null) {
+            binding.tilAmount.error = getString(R.string.error_invalid_input)
+            return
+        }
 
-        } catch (e: NumberFormatException) {
-            Toast.makeText(this, getString(R.string.error_invalid_input), Toast.LENGTH_SHORT).show()
+        val rateInfo = rates[checkedChipId]
+        if (rateInfo != null) {
+            val (rate, label) = rateInfo
+            val result = amount * rate
+            
+            showResult(result, label, rate)
+        }
+    }
+
+    private fun showResult(result: Double, label: String, rate: Double) {
+        // Update UI text
+        binding.tvResultValue.text = String.format(Locale.getDefault(), "%.2f", result)
+        binding.tvResultLabel.text = "Converted Amount ($label)"
+        binding.tvConversionDetails.text = "1 INR = $rate ${label.substringBefore(" ")}"
+
+        // Animate Result Card appearance if it was hidden
+        if (binding.cardResult.visibility != View.VISIBLE) {
+            binding.cardResult.visibility = View.VISIBLE
+            val fadeIn = AlphaAnimation(0f, 1f)
+            fadeIn.duration = 400
+            binding.cardResult.startAnimation(fadeIn)
+        } else {
+            // Subtle pop animation for update
+            val scaleUp = AlphaAnimation(0.5f, 1f)
+            scaleUp.duration = 200
+            binding.cardResult.startAnimation(scaleUp)
         }
     }
 }

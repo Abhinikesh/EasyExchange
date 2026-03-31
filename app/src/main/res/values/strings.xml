@@ -1,13 +1,20 @@
 <resources>
     <string name="app_name">EasyExchange</string>
-    <string name="enter_amount_inr">Enter Amount (INR)</string>
-    <string name="hint_amount">e.g. 1000</string>
-    <string name="selected_none">Selected: None</string>
-    <string name="result_placeholder">Result: --</string>
-    <string name="menu_instruction">Use the 3-dot menu to select currency</string>
-    <string name="action_inr_to_usd">INR to USD</string>
-    <string name="action_inr_to_eur">INR to EUR</string>
-    <string name="action_inr_to_gbp">INR to GBP</string>
-    <string name="error_empty_input">Please enter an amount in INR</string>
-    <string name="error_invalid_input">Invalid input amount</string>
+    <string name="header_title">Currency Converter</string>
+    <string name="header_subtitle">Convert currencies instantly with real-time rates.</string>
+    <string name="amount_label">Amount in INR (₹)</string>
+    <string name="amount_hint">0.00</string>
+    <string name="select_currency_label">Select Target Currency</string>
+    <string name="result_label">Converted Amount</string>
+    <string name="convert_button">Convert Now</string>
+
+    <string name="usd_label">USD ($)</string>
+    <string name="eur_label">EUR (€)</string>
+    <string name="gbp_label">GBP (£)</string>
+    <string name="jpy_label">JPY (¥)</string>
+    <string name="aud_label">AUD ($)</string>
+
+    <string name="error_empty_input">Please enter an amount</string>
+    <string name="error_invalid_input">Please enter a valid amount</string>
+    <string name="error_select_currency">Please select a currency</string>
 </resources>
