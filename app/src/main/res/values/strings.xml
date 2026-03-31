@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">EasyExchange</string>
+    <string name="enter_amount_inr">Enter Amount (INR)</string>
+    <string name="hint_amount">e.g. 1000</string>
+    <string name="selected_none">Selected: None</string>
+    <string name="result_placeholder">Result: --</string>
+    <string name="menu_instruction">Use the 3-dot menu to select currency</string>
+    <string name="action_inr_to_usd">INR to USD</string>
+    <string name="action_inr_to_eur">INR to EUR</string>
+    <string name="action_inr_to_gbp">INR to GBP</string>
+    <string name="error_empty_input">Please enter an amount in INR</string>
+    <string name="error_invalid_input">Invalid input amount</string>
+</resources>
