@@ -142,7 +142,7 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipUsd"
-                    style="@style/Widget.Material3.Chip.Choice"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/usd_label"
@@ -153,7 +153,7 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipEur"
-                    style="@style/Widget.Material3.Chip.Choice"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/eur_label"
@@ -164,7 +164,7 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipGbp"
-                    style="@style/Widget.Material3.Chip.Choice"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gbp_label"
@@ -175,7 +175,7 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipJpy"
-                    style="@style/Widget.Material3.Chip.Choice"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/jpy_label"
@@ -186,7 +186,7 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipAud"
-                    style="@style/Widget.Material3.Chip.Choice"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/aud_label"
