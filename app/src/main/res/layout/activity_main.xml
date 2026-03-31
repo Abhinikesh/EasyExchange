@@ -53,11 +53,21 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/text_secondary" />
 
-            <!-- Input Card with Shadow and Depth -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Loading Indicator -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/loadingIndicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <!-- Input Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="@color/surface"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="2dp"
@@ -186,7 +196,7 @@
 
             </com.google.android.material.chip.ChipGroup>
 
-            <!-- Result Section with Gradient-like Elevation -->
+            <!-- Result Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardResult"
                 android:layout_width="match_parent"
