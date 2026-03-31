@@ -53,6 +53,7 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/text_secondary" />
 
+
             <!-- Loading Indicator -->
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/loadingIndicator"
