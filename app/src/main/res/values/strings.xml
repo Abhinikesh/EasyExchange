@@ -5,7 +5,8 @@
     <string name="amount_label">Amount in INR (₹)</string>
     <string name="amount_hint">0.00</string>
     <string name="select_currency_label">Select Target Currency</string>
-    <string name="result_label">Converted Amount</string>
+    <string name="result_label_formatted">Converted Amount (%1$s)</string>
+    <string name="conversion_details_formatted">1 INR = %1$s %2$s</string>
     <string name="convert_button">Convert Now</string>
 
     <string name="usd_label">USD ($)</string>
