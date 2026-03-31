@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="EasyExchange"
+            app:title="@string/app_name"
             app:titleCentered="true"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
             app:titleTextColor="@color/text_primary" />
@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Currency Converter"
+                android:text="@string/header_title"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Convert currencies instantly with real-time rates."
+                android:text="@string/header_subtitle"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/text_secondary" />
 
@@ -70,7 +70,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Amount in INR (₹)"
+                        android:text="@string/amount_label"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                         android:textColor="@color/text_secondary" />
 
@@ -93,7 +93,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-medium"
-                            android:hint="0.00"
+                            android:hint="@string/amount_hint"
                             android:inputType="numberDecimal"
                             android:padding="16dp"
                             android:textSize="20sp" />
@@ -106,7 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Select Target Currency"
+                android:text="@string/select_currency_label"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="@color/text_secondary" />
 
@@ -123,7 +123,7 @@
                     style="@style/Widget.Material3.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="USD ($)"
+                    android:text="@string/usd_label"
                     app:chipBackgroundColor="@color/chip_background"
                     app:chipStrokeColor="@color/card_stroke" />
 
@@ -132,7 +132,7 @@
                     style="@style/Widget.Material3.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EUR (€)"
+                    android:text="@string/eur_label"
                     app:chipBackgroundColor="@color/chip_background"
                     app:chipStrokeColor="@color/card_stroke" />
 
@@ -141,7 +141,7 @@
                     style="@style/Widget.Material3.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GBP (£)"
+                    android:text="@string/gbp_label"
                     app:chipBackgroundColor="@color/chip_background"
                     app:chipStrokeColor="@color/card_stroke" />
 
@@ -150,7 +150,7 @@
                     style="@style/Widget.Material3.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="JPY (¥)"
+                    android:text="@string/jpy_label"
                     app:chipBackgroundColor="@color/chip_background"
                     app:chipStrokeColor="@color/card_stroke" />
 
@@ -159,7 +159,7 @@
                     style="@style/Widget.Material3.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AUD ($)"
+                    android:text="@string/aud_label"
                     app:chipBackgroundColor="@color/chip_background"
                     app:chipStrokeColor="@color/card_stroke" />
 
@@ -187,7 +187,7 @@
                         android:id="@+id/tvResultLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Converted Amount"
+                        android:text="@string/result_label_formatted"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                         android:textColor="@color/accent" />
 
@@ -196,7 +196,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="0.00"
+                        android:text="@string/amount_hint"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
@@ -206,9 +206,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="1 INR = 0.012 USD"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/text_secondary" />
+                        android:textColor="@color/text_secondary"
+                        tools:text="1 INR = 0.012 USD" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -217,7 +217,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="32dp"
-                android:text="Convert Now"
+                android:text="@string/convert_button"
                 android:textAllCaps="false"
                 android:textSize="18sp"
                 app:cornerRadius="16dp" />
