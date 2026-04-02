@@ -3,21 +3,15 @@
     <string name="header_title">Currency Converter</string>
     <string name="header_subtitle">Convert currencies instantly with real-time rates.</string>
     <string name="amount_label">Amount to Convert</string>
-    <string name="amount_hint">0.00</string>
+    <string name="amount_hint">Enter amount</string>
 
-    <string name="from_currency_label">From Currency</string>
-    <string name="to_currency_label">To Currency</string>
+    <string name="from_currency_label">From</string>
+    <string name="to_currency_label">To</string>
 
-    <string name="result_label_formatted">Converted Amount (%1$s)</string>
+    <string name="result_label_template">Result in %1$s</string>
     <string name="conversion_details_formatted">1 %1$s = %2$s %3$s</string>
     <string name="convert_button">Convert Now</string>
-
-    <string name="inr_label">INR (₹)</string>
-    <string name="usd_label">USD ($)</string>
-    <string name="eur_label">EUR (€)</string>
-    <string name="gbp_label">GBP (£)</string>
-    <string name="jpy_label">JPY (¥)</string>
-    <string name="aud_label">AUD ($)</string>
+    <string name="swap_description">Swap Currencies</string>
 
     <string name="error_empty_input">Please enter an amount</string>
     <string name="error_invalid_input">Please enter a valid amount</string>
