@@ -2,13 +2,17 @@
     <string name="app_name">EasyExchange</string>
     <string name="header_title">Currency Converter</string>
     <string name="header_subtitle">Convert currencies instantly with real-time rates.</string>
-    <string name="amount_label">Amount in INR (₹)</string>
+    <string name="amount_label">Amount to Convert</string>
     <string name="amount_hint">0.00</string>
-    <string name="select_currency_label">Select Target Currency</string>
+
+    <string name="from_currency_label">From Currency</string>
+    <string name="to_currency_label">To Currency</string>
+
     <string name="result_label_formatted">Converted Amount (%1$s)</string>
-    <string name="conversion_details_formatted">1 INR = %1$s %2$s</string>
+    <string name="conversion_details_formatted">1 %1$s = %2$s %3$s</string>
     <string name="convert_button">Convert Now</string>
 
+    <string name="inr_label">INR (₹)</string>
     <string name="usd_label">USD ($)</string>
     <string name="eur_label">EUR (€)</string>
     <string name="gbp_label">GBP (£)</string>
@@ -17,5 +21,5 @@
 
     <string name="error_empty_input">Please enter an amount</string>
     <string name="error_invalid_input">Please enter a valid amount</string>
-    <string name="error_select_currency">Please select a currency</string>
+    <string name="error_select_currency">Please select both currencies</string>
 </resources>
