@@ -12,8 +12,19 @@
     <string name="conversion_details_formatted">1 %1$s = %2$s %3$s</string>
     <string name="convert_button">Convert Now</string>
     <string name="swap_description">Swap Currencies</string>
+    <string name="clear_description">Clear Inputs</string>
+    <string name="history_description">Conversion History</string>
 
     <string name="error_empty_input">Please enter an amount</string>
     <string name="error_invalid_input">Please enter a valid amount</string>
     <string name="error_select_currency">Please select both currencies</string>
+
+    <string name="offline_mode_cached">Offline Mode: Using cached rates</string>
+    <string name="offline_mode_network">Offline Mode: Network unavailable</string>
+    <string name="history_title">Recent Conversions</string>
+    <string name="history_empty">No history available</string>
+    <string name="history_clear_all">Clear All</string>
+    <string name="close_button">Close</string>
+    <string name="inputs_cleared">Inputs cleared</string>
+    <string name="history_cleared">History cleared</string>
 </resources>
