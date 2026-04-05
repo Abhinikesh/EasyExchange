@@ -49,9 +49,18 @@ class MainActivity : AppCompatActivity() {
             .create(ExchangeRateApi::class.java)
     }
 
+    private var isSplashScreenVisible = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // Install Splash Screen before super.onCreate()
-        installSplashScreen()
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { isSplashScreenVisible }
+        
+        // Hide splash screen after 1 second
+        lifecycleScope.launch {
+            kotlinx.coroutines.delay(1000)
+            isSplashScreenVisible = false
+        }
         
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
