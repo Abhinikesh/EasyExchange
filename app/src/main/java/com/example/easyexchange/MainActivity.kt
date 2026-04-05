@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.example.easyexchange.databinding.ActivityMainBinding
+import com.example.easyexchange.network.ExchangeRateApi
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition { isSplashScreenVisible }
         
-        // Ensure splash screen shows for exactly 1 second as requested
         lifecycleScope.launch {
             delay(1000)
             isSplashScreenVisible = false
@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
         binding.etAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Debounce conversion to avoid spamming UI and history
                 conversionJob?.cancel()
                 conversionJob = lifecycleScope.launch {
                     delay(300)
@@ -216,7 +215,6 @@ class MainActivity : AppCompatActivity() {
         val type = object : TypeToken<MutableList<HistoryItem>>() {}.type
         val history: MutableList<HistoryItem> = Gson().fromJson(historyJson, type)
         
-        // Avoid duplicate last entry or insignificant changes
         if (history.isNotEmpty()) {
             val last = history.first()
             if (last.from == from && last.to == to && Math.abs(last.amount - amount) < 0.001) return
