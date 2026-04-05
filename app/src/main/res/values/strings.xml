@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">EasyExchange</string>
     <string name="header_title">Currency Converter</string>
-    <string name="header_subtitle">Convert currencies instantly with real-time rates.</string>
+    <string name="header_subtitle">Fast • Accurate • Global Currency Exchange</string>
     <string name="amount_label">Amount to Convert</string>
     <string name="amount_hint">Enter amount</string>
 
