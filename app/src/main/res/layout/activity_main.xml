@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_gradient_start"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -35,7 +35,7 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Header with Actions -->
+            <!-- Header Section -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -58,7 +58,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:alpha="0.7"
                         android:text="@string/header_subtitle"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="@color/text_secondary" />
@@ -66,12 +65,11 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnHistory"
-                    style="@style/Widget.Material3.Button.TextButton.Icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:contentDescription="History"
                     app:icon="@android:drawable/ic_menu_recent_history"
                     app:iconTint="@color/primary" />
             </RelativeLayout>
@@ -83,7 +81,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:indeterminate="true"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:indicatorColor="@color/primary"
+                app:trackColor="@color/primary_container" />
 
             <!-- Converter Card -->
             <com.google.android.material.card.MaterialCardView
@@ -91,9 +91,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="32dp"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp">
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/outline"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,21 +102,29 @@
                     android:orientation="vertical"
                     android:padding="24dp">
 
-                    <!-- Amount Input with Clear -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/amount_label"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textColor="@color/text_secondary" />
+
+                    <!-- Amount Input -->
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilAmount"
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:boxBackgroundColor="@color/bg_gradient_start"
-                            app:boxCornerRadiusBottomEnd="20dp"
-                            app:boxCornerRadiusBottomStart="20dp"
-                            app:boxCornerRadiusTopEnd="20dp"
-                            app:boxCornerRadiusTopStart="20dp"
+                            app:boxBackgroundColor="@color/surface_variant"
+                            app:boxCornerRadiusBottomEnd="16dp"
+                            app:boxCornerRadiusBottomStart="16dp"
+                            app:boxCornerRadiusTopEnd="16dp"
+                            app:boxCornerRadiusTopStart="16dp"
                             app:boxStrokeWidth="0dp"
                             app:boxStrokeWidthFocused="1dp"
                             app:hintEnabled="false">
@@ -125,12 +134,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-medium"
-                                android:hint="@string/amount_hint"
+                                android:hint="0.00"
                                 android:inputType="numberDecimal"
-                                android:padding="20dp"
-                                android:paddingEnd="50dp"
+                                android:padding="16dp"
+                                android:paddingEnd="48dp"
                                 android:textColor="@color/text_primary"
-                                android:textSize="28sp" />
+                                android:textSize="32sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.button.MaterialButton
@@ -140,7 +149,7 @@
                             android:layout_height="48dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginEnd="8dp"
+                            android:layout_marginEnd="4dp"
                             app:icon="@android:drawable/ic_menu_close_clear_cancel"
                             app:iconTint="@color/text_muted" />
                     </RelativeLayout>
@@ -149,9 +158,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginVertical="24dp"
-                        android:background="@color/card_stroke" />
+                        android:background="@color/outline" />
 
-                    <!-- Currency Selection Row -->
+                    <!-- Currency Selectors -->
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -162,25 +171,30 @@
                             android:baselineAligned="false"
                             android:orientation="horizontal">
 
-                            <!-- From Currency -->
+                            <!-- From -->
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:gravity="center"
                                 android:orientation="vertical">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/from_currency_label"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                                     android:textColor="@color/text_secondary" />
 
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    app:boxBackgroundColor="@color/surface_variant"
+                                    app:boxCornerRadiusBottomEnd="12dp"
+                                    app:boxCornerRadiusBottomStart="12dp"
+                                    app:boxCornerRadiusTopEnd="12dp"
+                                    app:boxCornerRadiusTopStart="12dp"
                                     app:boxStrokeWidth="0dp"
                                     app:boxStrokeWidthFocused="0dp">
 
@@ -188,40 +202,43 @@
                                         android:id="@+id/autoCompleteFrom"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:gravity="center"
                                         android:inputType="none"
-                                        android:paddingTop="12dp"
-                                        android:paddingBottom="12dp"
-                                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                                        android:textColor="@color/primary"
+                                        android:padding="12dp"
+                                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                        android:textColor="@color/text_primary"
                                         android:textStyle="bold"
                                         tools:text="USD" />
                                 </com.google.android.material.textfield.TextInputLayout>
                             </LinearLayout>
 
                             <Space
-                                android:layout_width="48dp"
+                                android:layout_width="56dp"
                                 android:layout_height="wrap_content" />
 
-                            <!-- To Currency -->
+                            <!-- To -->
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:gravity="center"
                                 android:orientation="vertical">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/to_currency_label"
-                                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                                     android:textColor="@color/text_secondary" />
 
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    app:boxBackgroundColor="@color/surface_variant"
+                                    app:boxCornerRadiusBottomEnd="12dp"
+                                    app:boxCornerRadiusBottomStart="12dp"
+                                    app:boxCornerRadiusTopEnd="12dp"
+                                    app:boxCornerRadiusTopStart="12dp"
                                     app:boxStrokeWidth="0dp"
                                     app:boxStrokeWidthFocused="0dp">
 
@@ -229,17 +246,14 @@
                                         android:id="@+id/autoCompleteTo"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:gravity="center"
                                         android:inputType="none"
-                                        android:paddingTop="12dp"
-                                        android:paddingBottom="12dp"
-                                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                                        android:textColor="@color/secondary"
+                                        android:padding="12dp"
+                                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                                        android:textColor="@color/text_primary"
                                         android:textStyle="bold"
                                         tools:text="INR" />
                                 </com.google.android.material.textfield.TextInputLayout>
                             </LinearLayout>
-
                         </LinearLayout>
 
                         <!-- Swap Button -->
@@ -248,19 +262,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
+                            android:layout_marginTop="16dp"
                             android:contentDescription="@string/swap_description"
-                            app:fabCustomSize="42dp"
+                            app:backgroundTint="@color/primary"
+                            app:fabCustomSize="48dp"
                             app:maxImageSize="24dp"
                             app:srcCompat="@android:drawable/stat_notify_sync"
-                            app:tint="@color/white"
-                            app:backgroundTint="@color/primary" />
-
+                            app:tint="@color/white" />
                     </RelativeLayout>
-
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Result Section -->
+            <!-- Result Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardResult"
                 android:layout_width="match_parent"
@@ -268,8 +281,8 @@
                 android:layout_marginTop="24dp"
                 android:visibility="invisible"
                 app:cardBackgroundColor="@color/primary"
-                app:cardCornerRadius="32dp"
-                app:cardElevation="8dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -286,9 +299,8 @@
                         android:alpha="0.8"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                         android:textColor="@color/white"
-                        android:textAllCaps="true"
                         android:letterSpacing="0.1"
-                        tools:text="Result in INR" />
+                        tools:text="RESULT IN INR" />
 
                     <TextView
                         android:id="@+id/tvResultValue"
@@ -297,7 +309,7 @@
                         android:layout_marginTop="8dp"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                         android:textColor="@color/white"
-                        android:textSize="44sp"
+                        android:textSize="40sp"
                         android:textStyle="bold"
                         tools:text="₹ 8,300.00" />
 
@@ -312,16 +324,6 @@
                         tools:text="1 USD = 83.00 INR" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnConvert"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/convert_button"
-                android:visibility="gone"
-                app:cornerRadius="20dp" />
 
             <Space
                 android:layout_width="match_parent"

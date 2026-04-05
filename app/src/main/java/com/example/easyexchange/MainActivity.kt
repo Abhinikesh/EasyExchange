@@ -17,6 +17,8 @@ import com.example.easyexchange.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     private val KEY_HISTORY = "conversion_history"
     
     private var currentRates: Map<String, Double>? = null
+    private var conversionJob: Job? = null
+    private var isSplashScreenVisible = true
     
     private val currencies = arrayOf("INR", "USD", "EUR", "GBP", "JPY", "AUD", "CAD")
     private val symbolMap = mapOf(
@@ -49,16 +53,13 @@ class MainActivity : AppCompatActivity() {
             .create(ExchangeRateApi::class.java)
     }
 
-    private var isSplashScreenVisible = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Install Splash Screen before super.onCreate()
         val splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition { isSplashScreenVisible }
         
-        // Hide splash screen after 1 second
+        // Ensure splash screen shows for exactly 1 second as requested
         lifecycleScope.launch {
-            kotlinx.coroutines.delay(1000)
+            delay(1000)
             isSplashScreenVisible = false
         }
         
@@ -84,15 +85,18 @@ class MainActivity : AppCompatActivity() {
         binding.etAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                performConversion(false)
+                // Debounce conversion to avoid spamming UI and history
+                conversionJob?.cancel()
+                conversionJob = lifecycleScope.launch {
+                    delay(300)
+                    performConversion(false)
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         })
 
         binding.btnSwap.setOnClickListener { swapCurrencies() }
-        
         binding.btnClear.setOnClickListener { resetInputs() }
-        
         binding.btnHistory.setOnClickListener { showHistory() }
     }
 
@@ -100,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         binding.etAmount.setText("")
         binding.tilAmount.error = null
         hideResult()
-        Toast.makeText(this, "Inputs cleared", Toast.LENGTH_SHORT).show()
+        showToast(getString(R.string.inputs_cleared))
     }
 
     private fun swapCurrencies() {
@@ -132,11 +136,11 @@ class MainActivity : AppCompatActivity() {
                     saveRatesToCache(baseCurrency, currentRates)
                 } else {
                     currentRates = getRatesFromCache(baseCurrency) ?: getDefaultFallbackRates(baseCurrency)
-                    showToast("Offline Mode: Using cached rates")
+                    showToast(getString(R.string.offline_mode_cached))
                 }
             } catch (e: Exception) {
                 currentRates = getRatesFromCache(baseCurrency) ?: getDefaultFallbackRates(baseCurrency)
-                showToast("Offline Mode: Network unavailable")
+                showToast(getString(R.string.offline_mode_network))
             } finally {
                 binding.loadingIndicator.visibility = View.GONE
                 performConversion(false)
@@ -146,10 +150,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun performConversion(showErrors: Boolean) {
         val amountStr = binding.etAmount.text.toString().trim()
+        val fromCurrency = binding.autoCompleteFrom.text.toString()
         val targetCurrency = binding.autoCompleteTo.text.toString()
 
         if (amountStr.isEmpty()) {
-            if (showErrors) binding.tilAmount.error = "Please enter an amount"
+            if (showErrors) binding.tilAmount.error = getString(R.string.error_empty_input)
             hideResult()
             return
         }
@@ -157,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
         val amount = amountStr.toDoubleOrNull()
         if (amount == null) {
-            if (showErrors) binding.tilAmount.error = "Invalid amount"
+            if (showErrors) binding.tilAmount.error = getString(R.string.error_invalid_input)
             hideResult()
             return
         }
@@ -166,9 +171,7 @@ class MainActivity : AppCompatActivity() {
         if (rate != null) {
             val convertedAmount = amount * rate
             updateResultUI(convertedAmount, targetCurrency, rate)
-            
-            // Auto-save to history after a short delay to avoid saving partial inputs
-            saveToHistory(amount, binding.autoCompleteFrom.text.toString(), targetCurrency, convertedAmount)
+            saveToHistory(amount, fromCurrency, targetCurrency, convertedAmount)
         } else {
             hideResult()
         }
@@ -180,8 +183,8 @@ class MainActivity : AppCompatActivity() {
         val fromCode = binding.autoCompleteFrom.text.toString()
         
         binding.tvResultValue.text = String.format(locale, "%s %,.2f", symbol, result)
-        binding.tvResultLabel.text = "Result in $toCode"
-        binding.tvConversionDetails.text = String.format(locale, "1 %s = %.4f %s", fromCode, rate, toCode)
+        binding.tvResultLabel.text = getString(R.string.result_label_template, toCode)
+        binding.tvConversionDetails.text = getString(R.string.conversion_details_formatted, fromCode, String.format(locale, "%.4f", rate), toCode)
 
         if (binding.cardResult.visibility != View.VISIBLE) {
             binding.cardResult.visibility = View.VISIBLE
@@ -213,11 +216,14 @@ class MainActivity : AppCompatActivity() {
         val type = object : TypeToken<MutableList<HistoryItem>>() {}.type
         val history: MutableList<HistoryItem> = Gson().fromJson(historyJson, type)
         
-        // Avoid duplicate last entry
-        if (history.isNotEmpty() && history.first().amount == amount && history.first().from == from && history.first().to == to) return
+        // Avoid duplicate last entry or insignificant changes
+        if (history.isNotEmpty()) {
+            val last = history.first()
+            if (last.from == from && last.to == to && Math.abs(last.amount - amount) < 0.001) return
+        }
 
         history.add(0, HistoryItem(from, to, amount, result))
-        if (history.size > 10) history.removeAt(history.size - 1)
+        if (history.size > 20) history.removeAt(history.size - 1)
         
         prefs.edit().putString(KEY_HISTORY, Gson().toJson(history)).apply()
     }
@@ -229,25 +235,25 @@ class MainActivity : AppCompatActivity() {
         val history: List<HistoryItem> = Gson().fromJson(historyJson, type)
 
         if (history.isEmpty()) {
-            showToast("No history available")
+            showToast(getString(R.string.history_empty))
             return
         }
 
         val historyText = history.joinToString("\n\n") { 
             val fromSymbol = symbolMap[it.from] ?: ""
             val toSymbol = symbolMap[it.to] ?: ""
-            String.format(Locale.getDefault(), "%s %.2f %s → %s %.2f %s", fromSymbol, it.amount, it.from, toSymbol, it.result, it.to)
+            String.format(Locale.getDefault(), "%s %,.2f %s \u2192 %s %,.2f %s", fromSymbol, it.amount, it.from, toSymbol, it.result, it.to)
         }
 
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle("Recent Conversions")
-        builder.setMessage(historyText)
-        builder.setPositiveButton("Close", null)
-        builder.setNeutralButton("Clear All") { _, _ -> 
-            prefs.edit().remove(KEY_HISTORY).apply()
-            showToast("History cleared")
-        }
-        builder.show()
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.history_title))
+            .setMessage(historyText)
+            .setPositiveButton(getString(R.string.close_button), null)
+            .setNeutralButton(getString(R.string.history_clear_all)) { _, _ -> 
+                prefs.edit().remove(KEY_HISTORY).apply()
+                showToast(getString(R.string.history_cleared))
+            }
+            .show()
     }
 
     // --- Caching & Fallbacks ---
@@ -268,8 +274,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun getDefaultFallbackRates(base: String): Map<String, Double> {
         return when (base) {
-            "INR" -> mapOf("USD" to 0.012, "EUR" to 0.011, "GBP" to 0.009, "INR" to 1.0)
-            "USD" -> mapOf("INR" to 83.5, "EUR" to 0.92, "GBP" to 0.78, "USD" to 1.0)
+            "INR" -> mapOf("USD" to 0.012, "EUR" to 0.011, "GBP" to 0.009, "JPY" to 1.81, "AUD" to 0.018, "CAD" to 0.016, "INR" to 1.0)
+            "USD" -> mapOf("INR" to 83.5, "EUR" to 0.92, "GBP" to 0.78, "JPY" to 151.0, "AUD" to 1.52, "CAD" to 1.36, "USD" to 1.0)
+            "EUR" -> mapOf("INR" to 90.5, "USD" to 1.08, "GBP" to 0.85, "JPY" to 164.0, "AUD" to 1.65, "CAD" to 1.48, "EUR" to 1.0)
             else -> mapOf(base to 1.0)
         }
     }
