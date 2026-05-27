@@ -205,8 +205,6 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    // --- History Implementation ---
-
     data class HistoryItem(val from: String, val to: String, val amount: Double, val result: Double, val timestamp: Long = System.currentTimeMillis())
 
     private fun saveToHistory(amount: Double, from: String, to: String, result: Double) {
